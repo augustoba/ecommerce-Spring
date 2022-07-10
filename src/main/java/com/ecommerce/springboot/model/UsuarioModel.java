@@ -34,10 +34,12 @@ public class UsuarioModel {
     private String telefono;
     private String tipo;
     private String password;
-   
+
+
     @OneToMany(mappedBy = "usuario")
     private List<ProductoModel> productos;
     
     @OneToMany(mappedBy = "usuario")
     private List<OrdenModel> ordenes;
+
 }

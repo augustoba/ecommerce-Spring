@@ -28,10 +28,12 @@ public class ProductoModel {
     private Integer id;
     private String nombre;
     private String descripcion;
-    private String imagnen;
+    private String imagen;
     private double precio;
     private int cantidad;
     
     @ManyToOne
     private UsuarioModel usuario;
+    
+    
 }
