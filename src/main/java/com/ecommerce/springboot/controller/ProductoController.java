@@ -77,7 +77,7 @@ public class ProductoController {
 
     @PostMapping("/update")
     public String update(ProductoModel producto, @RequestParam("img") MultipartFile file) throws IOException {
-       
+
         ProductoModel p = new ProductoModel();
         p = productoService.get(producto.getId()).get();
 
@@ -104,10 +104,9 @@ public class ProductoController {
         //eliminar cuando no sea la imagen por defecto
         if (!p.getImagen().equals("default.jpg")) {
             upload.deleteImage(p.getImagen());
-        } else {
-            productoService.delete(id);
         }
-        return "redirect:/productos";
+        productoService.delete(id);
 
+        return "redirect:/productos";
     }
 }
