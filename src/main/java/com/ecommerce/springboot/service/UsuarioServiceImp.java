@@ -26,4 +26,9 @@ public class UsuarioServiceImp implements UsuarioService {
         return usuarioRepository.findById(id);
     }
 
+    @Override
+    public UsuarioModel save(UsuarioModel usuario) {
+       return usuarioRepository.save(usuario);
+    }
+
 }

@@ -16,4 +16,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UsuarioService {
     Optional<UsuarioModel> findById(Integer id);
+    UsuarioModel save(UsuarioModel usuario);
 }
