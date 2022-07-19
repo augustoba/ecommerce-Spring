@@ -5,15 +5,20 @@
  */
 package com.ecommerce.springboot.controller;
 
+import com.ecommerce.springboot.model.OrdenModel;
 import com.ecommerce.springboot.model.UsuarioModel;
+import com.ecommerce.springboot.service.OrdenService;
 import com.ecommerce.springboot.service.UsuarioService;
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -29,6 +34,9 @@ public class UsuarioController {
     
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private OrdenService ordenService;
     
     @GetMapping("/registro")
     public String create() {
@@ -53,7 +61,7 @@ public class UsuarioController {
     @PostMapping("/acceder")
     public String acceder(UsuarioModel usuario, HttpSession session) {
         logger.info("Accesos: {}", usuario);
-        
+       
         Optional<UsuarioModel> user = usuarioService.findByMail(usuario.getMail());
         //logger.info("Usuario obtenido: {}", user.get());
         
@@ -67,6 +75,36 @@ public class UsuarioController {
         } else {
             logger.info("Usuario no existe");
         }
+        
+        return "redirect:/";
+    }
+    
+    @GetMapping("/compras")
+    public String obtenerCompras(HttpSession session, Model modelo){
+        modelo.addAttribute("sesion", session.getAttribute("idusuario"));
+        UsuarioModel usuario= usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString())).get();
+        List<OrdenModel> ordenes= ordenService.findByUsuario(usuario);
+        
+        modelo.addAttribute("ordenes", ordenes);
+        
+        return "usuario/compras";
+    }
+    
+    @GetMapping("/detalle/{id}")
+    public String detalleCompra(@PathVariable Integer id, HttpSession session, Model modelo){
+        //session
+        modelo.addAttribute("sesion", session.getAttribute("idusuario"));
+        logger.info("Id de la orden: {}", id);
+        Optional<OrdenModel> orden= ordenService.findById(id);
+        
+        modelo.addAttribute("detalles", orden.get().getDetalle());
+        
+        return "usuario/detallecompra";
+    }
+   
+    @GetMapping("/cerrar")
+    public String cerrarSesion(HttpSession session){
+        session.removeAttribute("idusuario");
         
         return "redirect:/";
     }

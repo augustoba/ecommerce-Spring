@@ -6,9 +6,11 @@
 package com.ecommerce.springboot.service;
 
 import com.ecommerce.springboot.model.OrdenModel;
+import com.ecommerce.springboot.model.UsuarioModel;
 import com.ecommerce.springboot.repository.OrdenRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +63,16 @@ public class OrdenServiceImp implements OrdenService {
             numeroConcatenado = "0000000" + String.valueOf(numero);
         }
         return numeroConcatenado;
+    }
+
+    @Override
+    public List<OrdenModel> findByUsuario(UsuarioModel usuario) {
+       return ordenRepository.findByUsuario(usuario);
+    }
+
+    @Override
+    public Optional<OrdenModel> findById(Integer id) {
+       return ordenRepository.findById(id);
     }
 
 }

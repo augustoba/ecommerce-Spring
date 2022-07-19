@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +58,14 @@ public class HomeController {
     //Objeto que almacena datos de la orden.
     OrdenModel orden = new OrdenModel();
     
-    @GetMapping
-    public String home(Model modelo) {
+    @GetMapping("")
+    public String home(Model modelo, HttpSession session) {
+        log.info("Sesion del usuario: {}", session.getAttribute("idusuario"));
         
         modelo.addAttribute("productos", productoService.findAll());
         
+        //session
+        modelo.addAttribute("sesion", session.getAttribute("idusuario"));
         return "usuario/home";
     }
     
@@ -137,18 +141,21 @@ public class HomeController {
     }
     
     @GetMapping("/getCart")
-    public String getCart(Model modelo) {
+    public String getCart(Model modelo, HttpSession session) {
         
         modelo.addAttribute("cart", detalles);
         modelo.addAttribute("orden", orden);
+        
+        //session
+          modelo.addAttribute("sesion", session.getAttribute("idusuario"));
         
         return "usuario/carrito";
     }
     
     @GetMapping("/order")
-    public String order(Model modelo) {
+    public String order(Model modelo, HttpSession session) {
         
-        UsuarioModel usuario = usuarioService.findById(1).get();
+        UsuarioModel usuario = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString())).get();
         
         modelo.addAttribute("cart", detalles);
         modelo.addAttribute("orden", orden);
@@ -158,13 +165,13 @@ public class HomeController {
     }
     
     @GetMapping("/saveOrder")
-    public String saveOrder() {
+    public String saveOrder(HttpSession session) {
         Date fechaCreacion = new Date();
         orden.setFechaCreacion(fechaCreacion);
         orden.setNumero(ordenService.generarNumeroOrden());
 
         //Usuario
-        UsuarioModel usuario = usuarioService.findById(1).get();
+       UsuarioModel usuario = usuarioService.findById(Integer.parseInt(session.getAttribute("idusuario").toString())).get();
         
         orden.setUsuario(usuario);
         ordenService.save(orden);
